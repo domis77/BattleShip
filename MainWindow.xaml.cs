@@ -23,6 +23,8 @@ namespace BattleShip
         public MainWindow()
         {
             InitializeComponent();
+
+            new GameWindow().Show();
         }
     }
 }
