@@ -23,8 +23,16 @@ namespace BattleShip
         public MainWindow()
         {
             InitializeComponent();
+        }
 
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
             new GameWindow().Show();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

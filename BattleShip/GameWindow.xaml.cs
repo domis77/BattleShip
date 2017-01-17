@@ -19,8 +19,6 @@ namespace BattleShip
     /// </summary>
     public partial class GameWindow : Window
     {
-
-
         Game newGame = new Game();
 
         public GameWindow()
@@ -39,7 +37,14 @@ namespace BattleShip
             land_3_radioButton.Checked += new RoutedEventHandler(Deployer.getChosedUnit);
             land_2_radioButton.Checked += new RoutedEventHandler(Deployer.getChosedUnit);
             plane_radioButton.Checked += new RoutedEventHandler(Deployer.getChosedUnit);
-            
+
+
+        }
+
+
+        private void deployRandom_button_Click(object sender, RoutedEventArgs e)
+        {
+            newGame.deployUnitRandom();
         }
 
         private void deployMyOwn_button_Click(object sender, RoutedEventArgs e)
@@ -47,15 +52,28 @@ namespace BattleShip
             newGame.deployUnits();
         }
 
-        private void deployRandom_button_Click(object sender, RoutedEventArgs e)
+        private void readFromFile_button_Click(object sender, RoutedEventArgs e)
         {
-            newGame.test(); 
+            MessageBox.Show("Not supported");
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+
+        private void play_button_Click(object sender, RoutedEventArgs e)
         {
+            deployRandom_button.Click -= deployRandom_button_Click;
+            deployMyOwn_button.Click -= deployMyOwn_button_Click;
+            readFromFile_button.Click -= readFromFile_button_Click;
+
             newGame.play();
         }
+
+        public void a()
+        {
+            deployRandom_button.Click -= deployRandom_button_Click;
+
+        }
+
+        
     }
 
 
@@ -83,38 +101,91 @@ namespace BattleShip
             Deployer deployer = new Deployer(player1.playerBoard, player1.unitList);
         }
 
-        public void test()
+        public void deployUnitRandom()
         {
-
+            Deployer deployer = new Deployer(player1.playerBoard, player1.unitList);
+            deployer.deployRandom();
         }
 
 
         public void play()
         {
-            match = new Play();
+            match = new Play(player1, player2);
+            match.start();
         }
 
     }
 
 
 
+
     class Play
     {
-        /*
-         * delete Deployer
-         * lock deploy option
-         */
+        private static Player player1;
+        private static Player player2;
+        private static Random rand = new Random();
+        private static int shotFired = 0;
 
+        private static List<int> shot = new List<int>();
+
+        public Play(Player p1, Player p2)
+        {
+            player1 = p1;
+            player2 = p2;
+        }
+
+        public void start()
+        {
+            Deployer deployer = new Deployer(player2.playerBoard, player2.unitList);
+            deployer.deployRandom();
+
+            MessageBox.Show("You first");
+        }
+  
+
+
+        public static void fire(object sender, EventArgs e)
+        {
+            Rectangle firedField = (Rectangle)sender;
+            string rectName = firedField.Name.ToString();
+
+            int x = Int32.Parse(rectName.Substring(1, rectName.IndexOf('y') - 1));
+            int y = Int32.Parse(rectName.Substring(rectName.IndexOf('y') + 1));
+
+            if(player2.playerBoard.board[x,y].Fill == Config._placedUnitColor_)
+            {
+                player1.fireBoard.board[x, y].Fill = Config._hitColor_;
+            }
+            else
+            {
+                player1.fireBoard.board[x, y].Fill = Config._missedColor_;           
+            }
+            shotFired++;
+            
+            
+            computerFire();
+        }
+
+
+
+        private static void computerFire()
+        {
+            int x = rand.Next(Config._boardWidth_);
+            int y = rand.Next(Config._boardHeight_);
+
+            while (shot.Contains(x))
+            {
+                x = rand.Next(Config._boardWidth_);
+                y = rand.Next(Config._boardHeight_);
+            }
+            shot.Add(x);
+
+            if(player1.playerBoard.board[x,y].Fill == Config._marineUnitColor_ || player1.playerBoard.board[x, y].Fill == Config._landUnitColor_)
+            {
+                player1.playerBoard.board[x, y].Fill = Config._hitColor_;
+            }
+        }
     }
     
     
-
-
-
-    
-
-
-    
-
-
 }

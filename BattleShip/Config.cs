@@ -18,7 +18,8 @@ namespace BattleShip
     {
         public static readonly int _unitSegmentSize_ = 20;
 
-        public static readonly string[] _unitTypes_ = { "PLANE", "MARINE", "LAND" };
+        //public static readonly string[] _unitTypes_ = { "PLANE", "MARINE", "LAND" };
+        public static readonly string[] _unitTypes_ = {"MARINE", "LAND" };
 
         public static readonly int _boardWidth_ = 22;
         public static readonly int _boardHeight_ = 14;
@@ -42,6 +43,8 @@ namespace BattleShip
 
         public static readonly SolidColorBrush _hitColor_ = new SolidColorBrush(Color.FromRgb(6, 201, 48));
         public static readonly SolidColorBrush _missedColor_ = new SolidColorBrush(Color.FromRgb(191, 51, 51));
+
+        public static readonly SolidColorBrush _placedUnitColor_ = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 
         public static readonly SolidColorBrush _mouseEnterSegmentColor_ = new SolidColorBrush(Color.FromRgb(255, 255, 0));
 

@@ -113,8 +113,6 @@ namespace BattleShip
                     board[x, y].MouseLeave += mouseLeaveSegment;
                     board[x, y].MouseLeave += Deployer.mouseLeaveDeploy;
 
-                    
-
                     board[x, y].MouseLeftButtonDown += Deployer.placeUnit;
 
                     if (x < board.GetLength(0) / 2)
@@ -153,6 +151,8 @@ namespace BattleShip
                     board[x, y] = new Rectangle();
                     board[x, y].Width = Config._unitSegmentSize_;
                     board[x, y].Height = Config._unitSegmentSize_;
+
+                    board[x, y].MouseLeftButtonDown += Play.fire;
 
                     board[x, y].Fill = Config._areaColor_;
                     board[x, y].Stroke = Config._areaColor_;

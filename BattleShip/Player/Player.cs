@@ -48,6 +48,8 @@ namespace BattleShip
         {
             playerBoard = new PlayerBoard();
             fireBoard = new FireBoard();
+
+            unitList = new List<Unit>();
         }
     }
 

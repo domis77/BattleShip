@@ -19,6 +19,7 @@ namespace BattleShip
     {
         private static System.Windows.Shapes.Rectangle[,] playerBoard;
         private static List<Unit> unitList;
+        private static LinkedList<System.Drawing.Point> coordinates = new LinkedList<System.Drawing.Point>();
         private static bool deployMyOwn = false;
 
         public Deployer(Board board, List<Unit> _unitList)
@@ -146,7 +147,6 @@ namespace BattleShip
             int y = Int32.Parse(rectName.Substring(rectName.IndexOf('y') + 1));
 
 
-            LinkedList<System.Drawing.Point> coordinates = new LinkedList<System.Drawing.Point>();
             
 
             if(isLandArea || isMarineArea)
@@ -353,9 +353,189 @@ namespace BattleShip
 
 
 
-        public static void deployRandom()
+        public void deployRandom()
         {
+            Random rand = new Random();
+            bool allowDeploy = true;
+            int numberOfTries = 0;
 
+            bool isLandUnit = false;
+            bool isMarineUnit = false;
+
+            int maxX = playerBoard.GetLength(0);
+            int maxY = playerBoard.GetLength(1);
+
+            int randX = 0;
+            int randY = 0;
+
+
+            while (numberOfTries < 10)
+            {
+                randY = rand.Next(maxY);
+                unitType = Config._unitTypes_[rand.Next(Config._unitTypes_.Length)];
+                //isLandUnit = false;
+                //isMarineUnit = false;
+
+                if (unitType == "LAND")
+                {
+                    unitSegments = rand.Next(2, 5);
+                    randX = rand.Next(maxX / 2);
+                    isLandUnit = true;
+                }
+                else if (unitType == "MARINE")
+                {
+                    unitSegments = rand.Next(1, 5);
+                    randX = rand.Next(maxX / 2, maxX);
+                    isMarineUnit = true;
+                }
+
+
+                while (true)
+                {
+                    List<System.Drawing.Point> currentUnitsPosition = new List<System.Drawing.Point>();
+                    if (unitList.Count > 0)
+                    {
+                        currentUnitsPosition.Clear();
+                        foreach (var unit in unitList)
+                        {
+                            foreach (var position in unit.coordinates)
+                            {
+                                currentUnitsPosition.Add(position);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ((randX + unitSegments) - 1 < maxX)
+                        {
+                            if ((isLandUnit && randX < (maxX / 2)) || (isMarineUnit && randX > maxX / 2))
+                            {
+                                for (int xi = randX, i = 0; i < unitSegments; xi++, i++)
+                                {
+                                    coordinates.AddLast(new System.Drawing.Point(xi, randY));
+                                }
+                                unitList.Add(UnitFactory.getUnit(unitType, coordinates));
+
+                                coordinates.Clear();
+                            }
+                        }
+                        else
+                        {
+                            numberOfTries++;
+                            break;
+                        }
+                    }
+
+
+
+                    if (isLandUnit)
+                    {
+                        if (randX < maxX / 2)
+                        {
+                            if ((randX + unitSegments) - 1 > maxX / 2)
+                            {
+                                numberOfTries++;
+                                break;
+                            }
+                            foreach (var position in currentUnitsPosition)
+                            {
+                                if (randX == position.X && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X - 1 && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X + 1 && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X && randY == position.Y - 1)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X && randY == position.Y + 1)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            numberOfTries++;
+                            break;
+                        }
+                    }
+
+
+                    else if (isMarineUnit)
+                    {
+                        if (randX > maxX / 2)
+                        {
+                            if ((randX + unitSegments) - 1 > maxX)
+                            {
+                                numberOfTries++;
+                                break;
+                            }
+                            foreach (var position in currentUnitsPosition)
+                            {
+                                if (randX == position.X && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X - 1 && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X + 1 && randY == position.Y)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X && randY == position.Y - 1)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                                if (randX == position.X && randY == position.Y + 1)
+                                {
+                                    numberOfTries++;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            numberOfTries++;
+                            break;
+                        }
+                    }
+
+
+                    if (allowDeploy)
+                    {
+                        for (int xi = randX, i = 0; i < unitSegments; xi++, i++)
+                        {
+                            playerBoard[xi, randY].Fill = Config._placedUnitColor_;
+                            coordinates.AddLast(new System.Drawing.Point(xi, randY));
+                        }
+                        unitList.Add(UnitFactory.getUnit(unitType, coordinates));
+
+                        coordinates.Clear();
+                        numberOfTries = 0;
+                        break;
+                    }
+                }
+            }
         }
+
     }
 }
